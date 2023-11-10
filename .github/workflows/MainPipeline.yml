@@ -36,7 +36,8 @@ jobs:
          run: echo java.runtime.version=17 | tee system.properties
 
        - name: Pushing To Prod
-         run: curl -O https://cli-dl.scalingo.com/install && bash install
+         run: curl -O https://cli-dl.scalingo.com/install && bash install ;
+              git remote add scalingo ${{ secrets.PROD_LINK }}
 
        - name: Print
-         run: scalingo --help
+         run: scalingo --app database-provider git-show
