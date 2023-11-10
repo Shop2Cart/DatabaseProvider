@@ -36,4 +36,7 @@ jobs:
          run: echo java.runtime.version=17 | tee system.properties
 
        - name: Pushing To Prod
-         run: git add . ; git commit -m "Prod" ; git push ${{ secrets.PROD_LINK }}
+         run: git config user.email "bisheshsingh.99@gmail.com" 
+              ; git add . 
+              ; git commit -m "Prod" 
+              ; git push ${{ secrets.PROD_LINK }}
