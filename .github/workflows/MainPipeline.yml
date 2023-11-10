@@ -22,3 +22,18 @@ jobs:
 
        - name: Run Gradle Build
          run: gradle build
+
+  Prod:
+    runs-on: ubuntu-latest
+    steps:
+       - name: Getting Project
+         uses: actions/checkout@v4.0.0
+
+       - name: Adding Properties File
+         run: echo added
+
+       - name: Adding System Prperties File
+         run: echo java.runtime.version=17 | tee system.properties
+
+       - name: Pushing To Prod
+         run: git add . ; git commit -m "Prod" ; git push ${{ secrets.PROD_LINK }}
