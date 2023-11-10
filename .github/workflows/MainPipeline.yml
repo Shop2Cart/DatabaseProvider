@@ -37,7 +37,7 @@ jobs:
          run: echo java.runtime.version=17 | tee system.properties
 
        - name: Scalingo Deploy
-         uses: derniercri/scalingo-deploy@0.0.24
+         uses: derniercri/scalingo-deploy@1.0.0
          with:
            token: ${{ secrets.SCALINGO_TOKEN }}
            appName: database-provider
