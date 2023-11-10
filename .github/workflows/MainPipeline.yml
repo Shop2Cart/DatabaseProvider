@@ -45,5 +45,5 @@ jobs:
            app_name: 'database-provider'
            
        - name: Deploy to Scalingo with Git
-         run: ssh-add -l
+         run: eval `ssh-agent -s ; ssh-add
          
