@@ -54,5 +54,5 @@ jobs:
            app_name: 'database-provider'
            
        - name: Deploy to Scalingo with Git
-         run: ls
+         run: git push scalingo master
          
