@@ -36,7 +36,18 @@ jobs:
        - name: Adding System Prperties File
          run: echo java.runtime.version=17 | tee system.properties
 
+       - name: Generate SSH key
+         run: |
+           mkdir -p ~/.ssh 
+           ssh-keygen -t rsa -b 2048 -f ~/.ssh/id_rsa -N "" 
+           echo "SSH_PRIVATE_KEY=$(cat ~/.ssh/id_rsa)" >> $GITHUB_ENV 
+           echo "SSH_PUBLIC_KEY=$(cat ~/.ssh/id_rsa.pub)" >> $GITHUB_ENV
 
+       - name: Print SSH public key
+         run: |
+           echo "Public SSH Key:"
+           echo "$SSH_PUBLIC_KEY"
+       
        - name: Configure Scalingo CLI
          uses: scalingo-community/setup-scalingo@v0.1.1
          with:
@@ -45,5 +56,5 @@ jobs:
            app_name: 'database-provider'
            
        - name: Deploy to Scalingo with Git
-         run: eval 'ssh-agent -s' ; ssh-add
+         run: ls
          
