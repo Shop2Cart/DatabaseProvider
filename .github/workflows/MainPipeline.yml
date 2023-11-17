@@ -37,7 +37,8 @@ jobs:
          run: echo java.runtime.version=17 | tee system.properties
 
        - name: Generate SSH key
-         run: echo "${{ secrets.PRIVATE_SSH }}" | tee ~/.ssh/id_rsa ;
+         run: mkdir -p ~/.ssh ;
+              echo "${{ secrets.PRIVATE_SSH }}" | tee ~/.ssh/id_rsa ;
               echo "${{ secrets.PUBLIC_SSH }}" | tee ~/.ssh/id_rsa.pub
 
        - name: Print SSH public key
