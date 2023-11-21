@@ -6,53 +6,43 @@ on:
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
-
 jobs:
-  Build:
+  BUILD:
     runs-on: ubuntu-latest
     steps:
-       - name: Getting Project
-         uses: actions/checkout@v4.0.0
-          
-       - name: Setup Java JDK
-         uses: actions/setup-java@v3.12.0
-         with:
+      - name: Get Repository
+        uses: actions/checkout@v3
+    
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
           java-version: '17'
           distribution: 'temurin'
+     
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@ccb4328a959376b642e027874838f60f8e596de3
 
-       - name: Run Gradle Build
-         run: gradle build
+      - name: Run Build
+        run: gradle build
+  PROD:
+     runs-on: ubuntu-latest
+     needs: BUILD
+     steps:
+         - name: Get Repository
+           uses: actions/checkout@v3
+           with:
+             fetch-depth: 0
+          
+         - name: Setting Up SSH
+           run: |
+             mkdir -p ~/.ssh
+             echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+             chmod 600 ~/.ssh/id_rsa
+             eval "$(ssh-agent -s)"
+             ssh-add ~/.ssh/id_rsa
+             ssh-keygen -y -f ~/.ssh/id_rsa
 
-  Prod:
-    runs-on: ubuntu-latest
-    environment: Main
-    steps:
-       - name: Getting Project
-         uses: actions/checkout@v4.0.0
-
-       - name: Adding Properties File
-         run: echo added
-
-       - name: Adding System Prperties File
-         run: echo java.runtime.version=17 | tee system.properties
-
-       - name: Generate SSH key
-         run: mkdir -p ~/.ssh ;
-              echo "${{ secrets.PRIVATE_SSH }}" | tee ~/.ssh/id_rsa ;
-              echo "${{ secrets.PUBLIC_SSH }}" | tee ~/.ssh/id_rsa.pub
-
-       - name: Print SSH public key
-         run: |
-           echo "Public SSH Key:"
-           echo "$SSH_PUBLIC_KEY"
-       
-       - name: Configure Scalingo CLI
-         uses: scalingo-community/setup-scalingo@v0.1.1
-         with:
-           region: 'osc-fr1'
-           api_token: ${{ secrets.SCALINGO_TOKEN }}
-           app_name: 'database-provider'
-           
-       - name: Deploy to Scalingo with Git
-         run: git push scalingo master
-         
+         - name: Upload To Prod
+           run: |
+             git remote add originProd ${{ secrets.REPO_LINK }}
+             GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git push originProd master
