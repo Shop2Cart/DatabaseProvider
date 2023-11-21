@@ -3,7 +3,6 @@ package com.shopster.databaseprovider.management_services;
 import com.shopster.databaseprovider.exceptions.DatabaseException;
 import com.shopster.databaseprovider.models.UserPrivateData;
 import com.shopster.databaseprovider.models.UserPublicData;
-import com.shopster.databaseprovider.models.UserPublicDataGetResponse;
 import com.shopster.databaseprovider.services.UserPrivateDataService;
 import com.shopster.databaseprovider.services.UserPublicDataService;
 import lombok.AllArgsConstructor;
@@ -26,7 +25,7 @@ public class UserDataManagementService {
     private UserPrivateDataService privateDataService;
     private UserPublicDataService publicDataService;
 
-    @Transactional(rollbackFor = DatabaseException.class)
+    @Transactional(rollbackFor = Exception.class)
     public Response addUser(final RegistrationRequest request) throws DatabaseException {
         final UserPrivateData privateData = new UserPrivateData(
                 request.getUserId(), request.getPassword());
@@ -45,7 +44,7 @@ public class UserDataManagementService {
         return response;
     }
 
-    @Transactional(rollbackFor = DatabaseException.class)
+    @Transactional(rollbackFor = Exception.class)
     public Response updateUser(final UpdateUserAuthDataRequest request) throws DatabaseException {
         final UserPublicData newPublicData = new UserPublicData(
                 request.getUserId(), request.getUserFirstName(),
@@ -65,11 +64,11 @@ public class UserDataManagementService {
     public Response getUser(final GetUserDataRequest request) throws DatabaseException {
         final UserPublicData publicData = publicDataService.getData(request.getUserId());
 
-        return new UserPublicDataGetResponse(HttpURLConnection.HTTP_OK,
+        return new SuccessResponse(HttpURLConnection.HTTP_OK,
                 String.format("Found %s Successfully", request.getUserId()), publicData);
     }
 
-    @Transactional(rollbackFor = DatabaseException.class)
+    @Transactional(rollbackFor = Exception.class)
     public Response updatePassword(final ResetPasswordRequest request) throws DatabaseException {
         final UserPrivateData privateData =
                 new UserPrivateData(request.getUserId(), request.getPassword());
