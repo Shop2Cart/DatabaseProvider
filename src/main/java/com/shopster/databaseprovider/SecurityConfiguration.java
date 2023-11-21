@@ -12,6 +12,6 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(final HttpSecurity httpSec) throws Exception {
         return httpSec.authorizeHttpRequests(auth -> {
             auth.anyRequest().authenticated();
-        }).httpBasic(http -> {}).csrf(AbstractHttpConfigurer::disable).build();
+        }).httpBasic(http -> {}).csrf(AbstractHttpConfigurer::disable).build(); 
     }
 }

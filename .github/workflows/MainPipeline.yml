@@ -1,0 +1,58 @@
+name: Pipeline
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+       - name: Getting Project
+         uses: actions/checkout@v4.0.0
+          
+       - name: Setup Java JDK
+         uses: actions/setup-java@v3.12.0
+         with:
+          java-version: '17'
+          distribution: 'temurin'
+
+       - name: Run Gradle Build
+         run: gradle build
+
+  Prod:
+    runs-on: ubuntu-latest
+    environment: Main
+    steps:
+       - name: Getting Project
+         uses: actions/checkout@v4.0.0
+
+       - name: Adding Properties File
+         run: echo added
+
+       - name: Adding System Prperties File
+         run: echo java.runtime.version=17 | tee system.properties
+
+       - name: Generate SSH key
+         run: mkdir -p ~/.ssh ;
+              echo "${{ secrets.PRIVATE_SSH }}" | tee ~/.ssh/id_rsa ;
+              echo "${{ secrets.PUBLIC_SSH }}" | tee ~/.ssh/id_rsa.pub
+
+       - name: Print SSH public key
+         run: |
+           echo "Public SSH Key:"
+           echo "$SSH_PUBLIC_KEY"
+       
+       - name: Configure Scalingo CLI
+         uses: scalingo-community/setup-scalingo@v0.1.1
+         with:
+           region: 'osc-fr1'
+           api_token: ${{ secrets.SCALINGO_TOKEN }}
+           app_name: 'database-provider'
+           
+       - name: Deploy to Scalingo with Git
+         run: git push scalingo master
+         
