@@ -42,12 +42,12 @@ public class UserAuthenticationController {
         return userDataManagementService.updatePassword(request);
     }
 
-    @GetMapping(value = "/signInVerify")
+    @PostMapping(value = "/signInVerify")
     public Response signInVerify(@RequestBody final LoginRequest request) throws DatabaseException {
         return userDataManagementService.signIn(request);
     }
 
-    @GetMapping(value = "/getUser")
+    @PostMapping(value = "/getUser")
     public Response getUser(@RequestBody final GetUserDataRequest request) throws DatabaseException {
         return userDataManagementService.getUser(request);
     }
